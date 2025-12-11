@@ -3,9 +3,12 @@ using HelloWorld;
 
 try
 {
-    var game = new Game();
-    game.Run();
+    IGame game = new Game();
+    game.Lancer();
 }
-catch (Exception ex){
-    Console.WriteLine(ex.Message, ConsoleColor.Red);
+catch (Exception ex)
+{
+    Console.ForegroundColor = ConsoleColor.Red;
+    Console.WriteLine(ex.Message);
+    Console.ResetColor();
 }
