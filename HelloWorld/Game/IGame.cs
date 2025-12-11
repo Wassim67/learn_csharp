@@ -2,5 +2,5 @@
 
 public interface IGame
 {
-    void Run();
+    void Lancer();
 }

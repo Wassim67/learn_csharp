@@ -7,7 +7,7 @@ public class Game : IGame
     private readonly Board _board = new();
     private char _currentPlayer = 'O';
 
-    public void Run()
+    public void Lancer()
     {
         while (true)
         {

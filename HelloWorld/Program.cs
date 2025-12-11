@@ -4,7 +4,7 @@ using HelloWorld;
 try
 {
     IGame game = new Game();
-    game.Run();
+    game.Lancer();
 }
 catch (Exception ex)
 {
