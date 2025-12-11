@@ -1,4 +1,7 @@
-﻿namespace HelloWorld;
+﻿using System;
+using System.Linq;
+
+namespace HelloWorld;
 
 public class Board
 {

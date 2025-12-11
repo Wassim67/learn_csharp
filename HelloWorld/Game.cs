@@ -1,4 +1,6 @@
-﻿namespace HelloWorld;
+﻿using System;
+
+namespace HelloWorld;
 
 public class Game
 {
