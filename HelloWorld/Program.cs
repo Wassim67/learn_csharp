@@ -3,7 +3,10 @@ using HelloWorld;
 
 try
 {
-    IGame game = new Game();
+    Console.WriteLine("Voulez-vous jouer contre un robot ? (O/N)");
+    bool modeRobot = Console.ReadLine()?.Trim().ToUpper() == "O";
+
+    IGame game = new Game(modeRobot);
     game.Lancer();
 }
 catch (Exception ex)
