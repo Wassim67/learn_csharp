@@ -1,21 +1,20 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace HelloWorld.Players;
 
 public class BotPlayer : IPlayer
 {
     public char Symbol { get; }
+    private readonly Random _random = new();
 
-    private readonly Random _random = new Random();
+    public BotPlayer(char symbol) => Symbol = symbol;
 
-    public BotPlayer(char symbol)
-    {
-        Symbol = symbol;
-    }
-
-    public (int row, int col) Play(Board board)
+    public async Task<(int row, int col)> PlayAsync(Board board, CancellationToken ct = default)
     {
         Console.WriteLine("Le robot réfléchit...");
+        await Task.Delay(800, ct); 
 
         while (true)
         {

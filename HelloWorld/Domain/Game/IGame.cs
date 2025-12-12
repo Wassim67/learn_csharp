@@ -2,5 +2,5 @@
 
 public interface IGame
 {
-    void Lancer();
+    Task Lancer(CancellationToken ct = default);
 }
