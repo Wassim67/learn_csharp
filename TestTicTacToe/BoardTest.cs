@@ -2,7 +2,7 @@
 
 namespace TestTicTacToe;
 
-public class UnitTest1
+public class BoardTest
 {
     [Fact]
     public void JouerUnCoup()

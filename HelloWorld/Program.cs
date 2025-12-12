@@ -3,9 +3,15 @@ using HelloWorld;
 
 try
 {
-    var game = new Game();
-    game.Run();
+    Console.WriteLine("Voulez-vous jouer contre un robot ? (O/N)");
+    bool modeRobot = Console.ReadLine()?.Trim().ToUpper() == "O";
+
+    IGame game = new Game(modeRobot);
+    game.Lancer();
 }
-catch (Exception ex){
-    Console.WriteLine(ex.Message, ConsoleColor.Red);
+catch (Exception ex)
+{
+    Console.ForegroundColor = ConsoleColor.Red;
+    Console.WriteLine(ex.Message);
+    Console.ResetColor();
 }
