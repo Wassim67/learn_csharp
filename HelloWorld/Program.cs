@@ -6,8 +6,8 @@ try
     Console.WriteLine("Voulez-vous jouer contre un robot ? (O/N)");
     bool modeRobot = Console.ReadLine()?.Trim().ToUpper() == "O";
 
-    IGame game = new Game(modeRobot);
-    game.Lancer();
+    IGame game = new Game(modeBot: true);
+    await game.Lancer();
 }
 catch (Exception ex)
 {

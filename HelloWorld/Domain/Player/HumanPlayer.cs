@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace HelloWorld.Players;
 
@@ -6,12 +8,9 @@ public class HumanPlayer : IPlayer
 {
     public char Symbol { get; }
 
-    public HumanPlayer(char symbol)
-    {
-        Symbol = symbol;
-    }
+    public HumanPlayer(char symbol) => Symbol = symbol;
 
-    public (int row, int col) Play(Board board)
+    public Task<(int row, int col)> PlayAsync(Board board, CancellationToken ct = default)
     {
         while (true)
         {
@@ -19,7 +18,7 @@ public class HumanPlayer : IPlayer
             int col = LireNombre("Colonne (1-3) : ") - 1;
 
             if (board.IsEmpty(row, col))
-                return (row, col);
+                return Task.FromResult((row, col));
 
             Console.WriteLine("Case déjà prise !");
         }
