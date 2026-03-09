@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using HelloWorld.Infrastructure.Persistence;
 using HelloWorld.Players;
 
 namespace HelloWorld;
@@ -11,25 +12,55 @@ public class Game : IGame
     private readonly IPlayer _playerO;
     private readonly IPlayer _playerX;
     private readonly bool _display;
+    private readonly bool _modeBot;
+    private readonly IGamePersistence? _persistence;
 
     private IPlayer _currentPlayer;
+    private long? _gameId;
 
-    public Game(bool modeBot)
-        : this(new Board(), new HumanPlayer('O'), modeBot ? new BotPlayer('X') : new HumanPlayer('X'), display: true)
+    public Game(bool modeBot, IGamePersistence? persistence = null)
+        : this(
+            new Board(),
+            new HumanPlayer('O'),
+            modeBot ? new BotPlayer('X') : new HumanPlayer('X'),
+            display: true,
+            modeBot: modeBot,
+            persistence: persistence)
     {
     }
 
     public Game(Board board, IPlayer playerO, IPlayer playerX, bool display = true)
+        : this(board, playerO, playerX, display, modeBot: false, persistence: null)
+    {
+    }
+
+    public Game(
+        Board board,
+        IPlayer playerO,
+        IPlayer playerX,
+        bool display,
+        bool modeBot,
+        IGamePersistence? persistence,
+        long? gameId = null,
+        char currentPlayerSymbol = 'O')
     {
         _board = board;
         _playerO = playerO;
         _playerX = playerX;
-        _currentPlayer = _playerO;
+        _currentPlayer = currentPlayerSymbol == _playerX.Symbol ? _playerX : _playerO;
         _display = display;
+        _modeBot = modeBot;
+        _persistence = persistence;
+        _gameId = gameId;
     }
 
     public async Task Lancer(CancellationToken ct = default)
     {
+        if (_persistence is not null && !_gameId.HasValue)
+        {
+            _gameId = await _persistence.CreateGameAsync(_modeBot, _board.ToStateString(), _currentPlayer.Symbol, ct);
+        }
+
         while (true)
         {
             AfficherEcran();
@@ -45,17 +76,20 @@ public class Game : IGame
 
             if (_board.HasWinner(_currentPlayer.Symbol))
             {
+                await FinaliserPartie(_currentPlayer.Symbol, ct);
                 AfficherVictoire();
                 return;
             }
 
             if (_board.IsFull())
             {
+                await FinaliserPartie(null, ct);
                 AfficherMatchNul();
                 return;
             }
 
             ChangerJoueur();
+            await SauvegarderPartie(ct);
         }
     }
 
@@ -73,7 +107,7 @@ public class Game : IGame
         Console.WriteLine();
         _board.Print();
         Console.WriteLine();
-        Console.WriteLine($"Au tour du joueur {_currentPlayer.Symbol}");
+        Console.WriteLine("Au tour du joueur " + _currentPlayer.Symbol);
     }
 
     private void AfficherVictoire()
@@ -82,7 +116,7 @@ public class Game : IGame
         Console.Clear();
         _board.Print();
         Console.WriteLine();
-        Console.WriteLine($"{_currentPlayer.Symbol} a gagné !");
+        Console.WriteLine(_currentPlayer.Symbol + " a gagné !");
     }
 
     private void AfficherMatchNul()
@@ -92,5 +126,25 @@ public class Game : IGame
         _board.Print();
         Console.WriteLine();
         Console.WriteLine("Match nul !");
+    }
+
+    private async Task SauvegarderPartie(CancellationToken ct)
+    {
+        if (_persistence is null || !_gameId.HasValue)
+        {
+            return;
+        }
+
+        await _persistence.UpdateGameStateAsync(_gameId.Value, _board.ToStateString(), _currentPlayer.Symbol, ct);
+    }
+
+    private async Task FinaliserPartie(char? winnerSymbol, CancellationToken ct)
+    {
+        if (_persistence is null || !_gameId.HasValue)
+        {
+            return;
+        }
+
+        await _persistence.FinishGameAsync(_gameId.Value, _board.ToStateString(), winnerSymbol, ct);
     }
 }

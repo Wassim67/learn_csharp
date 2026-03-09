@@ -5,7 +5,7 @@ namespace TestTicTacToe;
 public class GameTest
 {
     [Fact]
-    public void JoueurOGagneSurUneLigne()
+    public async Task JoueurOGagneSurUneLigne()
     {
         var board = new Board();
         var playerO = new FakePlayer('O', new[] { (0, 0), (0, 1), (0, 2) });
@@ -13,14 +13,14 @@ public class GameTest
 
         var game = new Game(board, playerO, playerX, display: false);
 
-        game.Lancer();
+        await game.Lancer();
 
         Assert.True(board.HasWinner('O'));
         Assert.False(board.HasWinner('X'));
     }
     
     [Fact]
-    public void TestPartiMatchNul()
+    public async Task TestPartiMatchNul()
     {
         var board = new Board();
 
@@ -29,7 +29,7 @@ public class GameTest
 
         var game = new Game(board, playerO, playerX, display: false);
 
-        game.Lancer();
+        await game.Lancer();
 
         Assert.False(board.HasWinner('O'));
         Assert.False(board.HasWinner('X'));
@@ -37,7 +37,7 @@ public class GameTest
     }
     
     [Fact]
-    public void CoupSurCaseDejaPris()
+    public async Task CoupSurCaseDejaPris()
     {
         var board = new Board();
 
@@ -46,14 +46,14 @@ public class GameTest
 
         var game = new Game(board, playerO, playerX, display: false);
 
-        game.Lancer();
+        await game.Lancer();
 
         Assert.True(board.HasWinner('O'));
     }
     
     
     [Fact]
-    public void TestCoupHorsGrille()
+    public async Task TestCoupHorsGrille()
     {
         var board = new Board();
         var playerO = new FakePlayer('O', new[] { (0, 0), (0, 1), (0, 2) });
@@ -66,7 +66,7 @@ public class GameTest
 
         var game = new Game(board, playerO, playerX, display: false);
         
-        game.Lancer();
+        await game.Lancer();
         
         Assert.True(board.HasWinner('O'));
         Assert.False(board.HasWinner('X'));

@@ -6,6 +6,7 @@ namespace HelloWorld;
 public class Board
 {
     private const int TAILLE = 3;      // plateau 3x3
+    private const char EmptyCell = '.';
     private char[][] _cells;
 
     public Board()
@@ -16,7 +17,7 @@ public class Board
             _cells[i] = new char[TAILLE];
             for (int j = 0; j < TAILLE; j++)
             {
-                _cells[i][j] = '.';   // le . chez moi c'est le vide
+                _cells[i][j] = EmptyCell;   // le . chez moi c'est le vide
             }
         }
     }
@@ -35,7 +36,7 @@ public class Board
 
     public bool IsEmpty(int row, int col)
     {
-        return _cells[row][col] == '.';
+        return _cells[row][col] == EmptyCell;
     }
 
     public void Play(int row, int col, char player)
@@ -97,6 +98,40 @@ public class Board
     public bool IsFull()
     {
         // fin dela partie
-        return _cells.All(row => row.All(c => c != '.'));
+        return _cells.All(row => row.All(c => c != EmptyCell));
+    }
+
+    public string ToStateString()
+    {
+        char[] state = new char[TAILLE * TAILLE];
+        int k = 0;
+
+        for (int i = 0; i < TAILLE; i++)
+        {
+            for (int j = 0; j < TAILLE; j++)
+            {
+                state[k++] = _cells[i][j];
+            }
+        }
+
+        return new string(state);
+    }
+
+    public void LoadFromState(string state)
+    {
+        if (state is null || state.Length != TAILLE * TAILLE)
+        {
+            throw new ArgumentException("Etat de plateau invalide.");
+        }
+
+        int k = 0;
+        for (int i = 0; i < TAILLE; i++)
+        {
+            for (int j = 0; j < TAILLE; j++)
+            {
+                char cell = state[k++];
+                _cells[i][j] = cell is 'X' or 'O' or EmptyCell ? cell : EmptyCell;
+            }
+        }
     }
 }

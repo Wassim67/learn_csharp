@@ -1,4 +1,7 @@
-﻿namespace HelloWorld;
+﻿using System.Threading;
+using System.Threading.Tasks;
+
+namespace HelloWorld;
 
 public interface IGame
 {
